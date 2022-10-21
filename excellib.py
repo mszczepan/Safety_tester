@@ -1,4 +1,5 @@
 import openpyxl as op
+from openpyxl.utils import get_column_letter
 
 
 # Loading and processing of the safety matrix
@@ -24,9 +25,26 @@ class ExcelService:
 
     def read_matrix(self):
 
-        for row in range(self.row_start, self.row_end):
+        # building matrix structure
 
-            #for column in range(self.column_start, self.column_end):
-            self.matrix_conf[self.sh[f'{self.column_start}{row}'].value] = 1
-            #print(f'{self.column_start}{row}')
+        for row in range(self.row_start, self.row_end):
+            self.matrix_conf[self.sh[f'{get_column_letter(self.column_start)}{row + 1}'].value] = []
+
+            for column in range(self.column_start + 1, self.column_end + 1):
+                self.matrix_conf[self.sh[f'{get_column_letter(self.column_start)}{row + 1}'].value].append(
+                    {self.sh[f'{get_column_letter(column)}{self.row_start}'].value: None})
+
+        # matrix filling
+
+        row_number = self.row_start + 1
+
+        for key, value in self.matrix_conf.items():
+            count = 0
+            column_number = self.column_start + 1
+            for item in value:
+                self.matrix_conf[key][count][list(item.keys())[0]] = self.sh[f'{get_column_letter(column_number)}{row_number}'].value
+                column_number = column_number + 1
+                count = count + 1
+            row_number = row_number + 1
+
         print(self.matrix_conf)
