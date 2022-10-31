@@ -25,7 +25,7 @@ class ExcelService:
 
     def read_matrix(self):
 
-        # building matrix structure
+        # building of matrix structure
 
         for row in range(self.row_start, self.row_end):
             self.matrix_conf[self.sh[f'{get_column_letter(self.column_start)}{row + 1}'].value] = []
@@ -42,9 +42,13 @@ class ExcelService:
             count = 0
             column_number = self.column_start + 1
             for item in value:
-                self.matrix_conf[key][count][list(item.keys())[0]] = self.sh[f'{get_column_letter(column_number)}{row_number}'].value
+                if self.sh[f'{get_column_letter(column_number)}{row_number}'].value is None:
+                    self.matrix_conf[key][count][list(item.keys())[0]] = 0
+                elif self.sh[f'{get_column_letter(column_number)}{row_number}'].value == 'x':
+                    self.matrix_conf[key][count][list(item.keys())[0]] = 1
                 column_number = column_number + 1
                 count = count + 1
             row_number = row_number + 1
 
-        print(self.matrix_conf)
+            return self.matrix_conf
+
